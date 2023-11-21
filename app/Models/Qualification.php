@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\CurriculumVitae;
 
 class Qualification extends Model
 {
@@ -31,5 +33,10 @@ class Qualification extends Model
     public function learningPeriod(): BelongsTo
     {
         return $this->belongsTo(LearningPeriod::class);
+    }
+
+    public function curriculumVitaes(): BelongsToMany
+    {
+        return $this->belongsToMany(CurriculumVitae::class);
     }
 }

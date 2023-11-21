@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SectionResource\Pages;
-use App\Filament\Resources\SectionResource\RelationManagers;
-use App\Models\Section;
+use App\Filament\Resources\SkillAwardResource\Pages;
+use App\Filament\Resources\SkillAwardResource\RelationManagers;
+use App\Models\SkillAward;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,12 +12,15 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Enums\SkillAwardTypeEnum;
 
-class SectionResource extends Resource
+class SkillAwardResource extends Resource
 {
-    protected static ?string $model = Section::class;
+    protected static ?string $model = SkillAward::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+    protected static ?string $navigationLabel = 'Skills/Awards';
+
+    protected static ?string $navigationIcon = 'heroicon-o-trophy';
 
     protected static ?string $navigationGroup = 'Content';
 
@@ -25,15 +28,17 @@ class SectionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('parent_section_id')
-                    ->native(config()->get('app.useNativeSelect', true))
-                    ->relationship('parentSection', 'name'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('text')
-                    ->required()
+                Forms\Components\Textarea::make('description')
+                    ->maxLength(65535)
                     ->columnSpanFull(),
+                Forms\Components\Select::make('skillAwardType')
+                    ->label('Skill or Award?')
+                    ->native(config()->get('app.useNativeSelect', true))
+                    ->options(SkillAwardTypeEnum::toSelectArray())
+                    ->required(),
             ]);
     }
 
@@ -41,9 +46,6 @@ class SectionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('parentSection.name')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -53,6 +55,8 @@ class SectionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('skillAwardType')
                     ->searchable(),
             ])
             ->filters([
@@ -78,9 +82,9 @@ class SectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSections::route('/'),
-            'create' => Pages\CreateSection::route('/create'),
-            'edit' => Pages\EditSection::route('/{record}/edit'),
+            'index' => Pages\ListSkillAwards::route('/'),
+            'create' => Pages\CreateSkillAward::route('/create'),
+            'edit' => Pages\EditSkillAward::route('/{record}/edit'),
         ];
     }
 }

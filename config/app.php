@@ -19,6 +19,7 @@ return [
     'name' => env('APP_NAME', 'CV API'),
 
     'useNativeSelect' => false,
+    'contentSectionMenuName' => 'Content',
 
     /*
     |--------------------------------------------------------------------------

@@ -4,25 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Enums\SkillAwardTypeEnum;
+Use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\CurriculumVitae;
 
-class LearningPeriod extends Model
+class SkillAward extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'startDate',
-        'endDate',
-        'placeOfStudy',
-        'notes',
+        'name',
+        'description',
+        'skillAwardType',
     ];
 
-    public function qualifications(): HasMany
-    {
-        return $this->hasMany(Qualification::class);
-    }
+    protected $casts = [
+        'skillAwardType' => SkillAwardTypeEnum::class,
+    ];
 
     public function curriculumVitaes(): BelongsToMany
     {

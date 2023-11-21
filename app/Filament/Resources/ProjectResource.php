@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SectionResource\Pages;
-use App\Filament\Resources\SectionResource\RelationManagers;
-use App\Models\Section;
+use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Models\Project;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,11 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SectionResource extends Resource
+class ProjectResource extends Resource
 {
-    protected static ?string $model = Section::class;
+    protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Content';
 
@@ -25,15 +25,25 @@ class SectionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('parent_section_id')
-                    ->native(config()->get('app.useNativeSelect', true))
-                    ->relationship('parentSection', 'name'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('text')
+                Forms\Components\Textarea::make('technologies')
                     ->required()
+                    ->maxLength(65535)
                     ->columnSpanFull(),
+                Forms\Components\Textarea::make('aims')
+                    ->required()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('githubLink')
+                    ->prefix("https://")
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('projectLink')
+                    ->prefix("https://")
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -41,9 +51,6 @@ class SectionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('parentSection.name')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -53,6 +60,10 @@ class SectionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('githubLink')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('projectLink')
                     ->searchable(),
             ])
             ->filters([
@@ -78,9 +89,9 @@ class SectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSections::route('/'),
-            'create' => Pages\CreateSection::route('/create'),
-            'edit' => Pages\EditSection::route('/{record}/edit'),
+            'index' => Pages\ListProjects::route('/'),
+            'create' => Pages\CreateProject::route('/create'),
+            'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
     }
 }

@@ -2,38 +2,34 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SectionResource\Pages;
-use App\Filament\Resources\SectionResource\RelationManagers;
-use App\Models\Section;
+use App\Filament\Resources\CurriculumVitaeResource\Pages;
+use App\Filament\Resources\CurriculumVitaeResource\RelationManagers;
+use App\Models\CurriculumVitae;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SectionResource extends Resource
+class CurriculumVitaeResource extends Resource
 {
-    protected static ?string $model = Section::class;
+    protected static ?string $model = CurriculumVitae::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-view-columns';
-
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('parent_section_id')
-                    ->native(config()->get('app.useNativeSelect', true))
-                    ->relationship('parentSection', 'name'),
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('slug')
                     ->required()
+                    ->minLength(4)
+                    ->alphaDash()
+                    ->unique()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('text')
-                    ->required()
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -41,9 +37,6 @@ class SectionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('parentSection.name')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -52,7 +45,7 @@ class SectionResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
             ])
             ->filters([
@@ -71,16 +64,21 @@ class SectionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\JobsRelationManager::class,
+            RelationManagers\QualificationsRelationManager::class,
+            RelationManagers\SectionsRelationManager::class,
+            RelationManagers\ProjectsRelationManager::class,
+            RelationManagers\SkillAwardsRelationManager::class,
+            RelationManagers\ContactMethodsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSections::route('/'),
-            'create' => Pages\CreateSection::route('/create'),
-            'edit' => Pages\EditSection::route('/{record}/edit'),
+            'index' => Pages\ListCurriculumVitaes::route('/'),
+            'create' => Pages\CreateCurriculumVitae::route('/create'),
+            'edit' => Pages\EditCurriculumVitae::route('/{record}/edit'),
         ];
     }
 }
