@@ -3,12 +3,13 @@
 namespace App\Filament\Resources\CurriculumVitaeResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Enums\ContactValueTypeEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class ContactMethodsRelationManager extends RelationManager
 {
@@ -16,7 +17,7 @@ class ContactMethodsRelationManager extends RelationManager
 
     protected function canCreate(): bool
     {
-        return false;
+        return true;
     }
 
     public function form(Form $form): Form
@@ -26,6 +27,14 @@ class ContactMethodsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('value')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('valueType')
+                    ->label('Value Type')
+                    ->native(config()->get('app.useNativeSelect', true))
+                    ->options(ContactValueTypeEnum::toSelectArray())
+                    ->required(),
             ]);
     }
 
@@ -35,6 +44,7 @@ class ContactMethodsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('value'),
             ])
             ->filters([
                 //

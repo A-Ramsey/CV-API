@@ -16,7 +16,7 @@ class SkillAwardsRelationManager extends RelationManager
 
     protected function canCreate(): bool
     {
-        return false;
+        return true;
     }
 
     public function form(Form $form): Form
