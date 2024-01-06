@@ -58,4 +58,9 @@ class CurriculumVitae extends Model
     {
         return $this->belongsToMany(Project::class);
     }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

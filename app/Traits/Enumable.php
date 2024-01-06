@@ -11,7 +11,7 @@ trait Enumable {
         }
         return $array;
     }
-    
+
     public static function toSelectArray(): array
     {
         $array = [];
