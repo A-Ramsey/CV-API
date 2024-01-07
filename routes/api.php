@@ -4,6 +4,7 @@ use App\Http\Controllers\JsonRest\JsonRestAwardController;
 use App\Http\Controllers\JsonRest\JsonRestContactController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JsonRest\JsonRestAuthController;
 use App\Http\Controllers\JsonRest\JsonRestCvController;
 use App\Http\Controllers\JsonRest\JsonRestQualificationController;
 use App\Http\Controllers\JsonRest\JsonRestJobController;
@@ -28,31 +29,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('json_rest')->group(function () {
     Route::prefix('v1')->group(function () {
-        Route::prefix('cv/{cv}')->group(function () {
-
-            //cv
+        Route::post('login', [JsonRestAuthController::class, 'index']);
+        Route::middleware('auth:sanctum')->prefix('cv')->group(function () {
             Route::get('/', [JsonRestCvController::class, 'index']);
 
-            //qualifications
-            Route::get('qualifications', [JsonRestQualificationController::class, 'index']);
+            Route::prefix('{cv}')->group(function () {
+                //cv
+                Route::get('/', [JsonRestCvController::class, 'get'])->name('api.json_rest.get_cv');
 
-            //jobs
-            Route::get('jobs', [JsonRestJobController::class, 'index']);
+                //qualifications
+                Route::get('qualifications', [JsonRestQualificationController::class, 'index'])->name('api.json_rest.get_qualifications');
 
-            //projects
-            Route::get('projects', [JsonRestProjectController::class, 'index']);
+                //jobs
+                Route::get('jobs', [JsonRestJobController::class, 'index'])->name('api.json_rest.get_jobs');
 
-            //sections
-            Route::get('sections', [JsonRestSectionsController::class, 'index']);
+                //projects
+                Route::get('projects', [JsonRestProjectController::class, 'index'])->name('api.json_rest.get_projects');
 
-            //skills
-            Route::get('skills', [JsonRestSkillController::class, 'index']);
+                //sections
+                Route::get('sections', [JsonRestSectionsController::class, 'index'])->name('api.json_rest.get_sections');
 
-            //awards
-            Route::get('awards', [JsonRestAwardController::class, 'index']);
+                //skills
+                Route::get('skills', [JsonRestSkillController::class, 'index'])->name('api.json_rest.get_skills');
 
-            //contact
-            Route::get('contact', [JsonRestContactController::class, 'index']);
+                //awards
+                Route::get('awards', [JsonRestAwardController::class, 'index'])->name('api.json_rest.get_awards');
+
+                //contact
+                Route::get('contact', [JsonRestContactController::class, 'index'])->name('api.json_rest.get_contact');
+            });
         });
 
     });
